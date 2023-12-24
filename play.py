@@ -1,6 +1,6 @@
 import subprocess
 import time
-import pygetwindow as gw  # Modul pygetwindow
+import signal
 
 def open_chrome_as_guest(video_url):
     try:
@@ -10,9 +10,12 @@ def open_chrome_as_guest(video_url):
         print(f"Error: {e}")
 
 def minimize_chrome():
-    chrome_window = gw.getWindowsWithTitle("Google Chrome")
-    if chrome_window:
-        chrome_window[0].minimize()
+    # Mencari proses Chrome dan mengirimkan sinyal untuk meminimalkan
+    try:
+        chrome_pid = int(subprocess.check_output(["pgrep", "chrome"]))
+        os.kill(chrome_pid, signal.SIGUSR1)  # Mengirimkan sinyal untuk meminimalkan
+    except (subprocess.CalledProcessError, ValueError):
+        print("Error minimizing Chrome")
 
 def read_youtube_urls_from_file(file_path):
     with open(file_path, 'r') as file:
@@ -21,14 +24,14 @@ def read_youtube_urls_from_file(file_path):
 if __name__ == "__main__":
     # Gantilah dengan nama file yang berisi daftar URL video YouTube
     file_path = "yt_list.txt"
-    
+
     while True:
         # Membaca daftar URL dari file
         youtube_urls = read_youtube_urls_from_file(file_path)
-        
+
         # Melakukan perulangan setiap 30 detik sebanyak 5 kali
         for url in youtube_urls:
-            minimize_chrome()  # Minimalkan jendela Chrome sebelum membuka URL berikutnya
+            minimize_chrome()  # Meminimalkan jendela Chrome sebelum membuka URL berikutnya
             url_with_params = f"{url.strip()}&autoplay=1&mute=1&loop=1"
             open_chrome_as_guest(url_with_params)  # Menghapus karakter newline dan spasi ekstra
             time.sleep(30)  # Menunggu 30 detik sebelum iterasi selanjutnya
