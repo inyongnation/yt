@@ -17,11 +17,11 @@ if __name__ == "__main__":
     file_path = "yt_list.txt"
 
     while True:
-    # Membaca daftar URL dari file
-    youtube_urls = read_youtube_urls_from_file(file_path)
-    
-    # Melakukan perulangan setiap 5 detik sebanyak 5 kali
-    for url in youtube_urls:
-        url_with_params = f"{url.strip()}&autoplay=1&mute=1&loop=1"
-        open_chrome_as_guest(url_with_params)  # Menghapus karakter newline dan spasi ekstra
-        time.sleep(5)  # Menunggu 5 detik sebelum iterasi selanjutnya
+        # Membaca daftar URL dari file
+        youtube_urls = read_youtube_urls_from_file(file_path)
+        
+        # Melakukan perulangan setiap 5 detik sebanyak 5 kali
+        for url in youtube_urls:
+            url_with_params = f"{url.strip()}&autoplay=1&mute=1&loop=1"
+            open_chrome_as_guest(url_with_params)  # Menghapus karakter newline dan spasi ekstra
+            time.sleep(30)  # Menunggu 30 detik sebelum iterasi selanjutnya
