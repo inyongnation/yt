@@ -19,7 +19,8 @@ if __name__ == "__main__":
     # Membaca daftar URL dari file
     youtube_urls = read_youtube_urls_from_file(file_path)
     
-    # Melakukan perulangan setiap 30 detik sebanyak 5 kali
-    for url in youtube_urls:
-        open_chrome_as_guest(url.strip())  # Menghapus karakter newline dan spasi ekstra
-        time.sleep(30)  # Menunggu 30 detik sebelum iterasi selanjutnya
+    # Melakukan perulangan sebanyak 10 kali
+    for i in range(10):
+        for url in youtube_urls:
+            open_chrome_as_guest(url.strip())  # Menghapus karakter newline dan spasi ekstra
+            time.sleep(5)  # Menunggu 5 detik sebelum membuka video selanjutnya
