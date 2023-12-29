@@ -1,26 +1,62 @@
+import os
+import platform
 import subprocess
-import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-def open_chrome_as_guest(video_url):
+def install_selenium():
+    subprocess.run(["pip", "install", "selenium"])
+
+def download_and_extract_chromedriver():
+    platform_name = platform.system().lower()
+    
+    if platform_name == "linux":
+        # Unduh ChromeDriver
+        subprocess.run(["wget", "https://chromedriver.storage.googleapis.com/LATEST_RELEASE/chromedriver_linux64.zip"])
+        # Ekstrak ChromeDriver
+        subprocess.run(["unzip", "chromedriver_linux64.zip", "-d", "/usr/local/bin/"])
+        # Hapus file zip setelah diekstrak
+        subprocess.run(["rm", "chromedriver_linux64.zip"])
+
+def open_youtube_video():
+    # Buat objek ChromeOptions
+    chrome_options = Options()
+
+    # Aktifkan mode kiosk untuk layar penuh
+    chrome_options.add_argument("--kiosk")
+
     try:
-        # Membuka Chrome sebagai tamu, memutar video YouTube, dan mengatur autoplay, mute, dan loop
-        subprocess.run(["google-chrome", "--guest", "--new-window", video_url], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
+        while True:
+            # Buat objek WebDriver dengan opsi yang telah ditentukan
+            driver = webdriver.Chrome(options=chrome_options)
 
-def read_youtube_urls_from_file(file_path):
-    with open(file_path, 'r') as file:
-        return file.readlines()
+            # Buka halaman YouTube dengan URL yang diberikan
+            youtube_url = "https://www.youtube.com/watch?v=RsRvi7YKG-8&t=4s&autoplay=1"
+            driver.get(youtube_url)
+
+            # Biarkan video berjalan selama beberapa saat
+            import time
+            time.sleep(600)
+
+            # Tutup peramban ketika selesai
+            driver.quit()
+
+    except KeyboardInterrupt:
+        # Tangkap penekanan Ctrl+C untuk keluar dari loop
+        pass
 
 if __name__ == "__main__":
-    # Gantilah dengan nama file yang berisi daftar URL video YouTube
-    file_path = "yt_list.txt"
-    
-    # Membaca daftar URL dari file
-    youtube_urls = read_youtube_urls_from_file(file_path)
-    
-    # Melakukan perulangan sebanyak 10 kali
-    for i in range(10):
-        for url in youtube_urls:
-            open_chrome_as_guest(url.strip())  # Menghapus karakter newline dan spasi ekstra
-            time.sleep(30)  # Menunggu 30 detik sebelum membuka video selanjutnya
+    try:
+        # Coba impor Selenium
+        import selenium
+    except ImportError:
+        # Jika Selenium belum terinstal, instalkan
+        install_selenium()
+
+    # Cek jika ChromeDriver sudah ada
+    if not os.path.isfile("/usr/local/bin/chromedriver"):
+        # Jika belum, unduh dan ekstrak ChromeDriver
+        download_and_extract_chromedriver()
+
+    # Setelah instalasi dan pengunduhan selesai, jalankan skrip utama
+    open_youtube_video()
